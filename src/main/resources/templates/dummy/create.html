@@ -13,7 +13,7 @@
   <body class="mb-5">
     <!-- nav start -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
+        <div class="container-fluid">
           <a class="navbar-brand" href="/data">e-KTP</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -36,27 +36,27 @@
     <!-- nav end -->
 
     <!-- main start -->
-      <div class="container mt-3">
-          <h1 align="center">Create Data Dummy</h1>
-          <div class="container">
+      <div class="container-fluid mt-3">
+          <h1 align="center">Dummy</h1>
+          <div class="container-fluid">
               <div class="row">
                   <form action="/newData" method="post" name="form" enctype="multipart/form-data">
                         <div class="item form-group">
                           <label class="col-form-label col-md-3 col-sm-3 label-align">ID</label>
-                          <div class="col-md-6 col-sm-6 ">
+                          <div class="col-md-6 col-sm-6 mb-3">
                               <input type="text" name="id" class="form-control" size="4" required>
                           </div>
                         </div>
                         <div class="item form-group">
                           <label class="col-form-label col-md-3 col-sm-3 label-align">Tanggal Lahir</label>
                             <div class="col-md-6 col-sm-6">
-                                <input type="date" name="tanggal" placeholder="(yyyy-mm-dd)" class="form-control" required>
+                                <input type="date" name="tanggal" placeholder="(yyyy-mm-dd)" class="form-control mb-3" required>
                             </div>
                         </div>
                         <div class="item form-group">
                           <label class="col-form-label col-md-3 col-sm-3 label-align">Gambar</label>
                             <div class="col-md-6 col-sm-6">
-                                <input type="file" name="gambar" class="form-control" required>
+                                <input type="file" name="gambar" class="form-control mb-3" required>
                             </div>
                         </div>
                         <div class="item form-group mt-4">

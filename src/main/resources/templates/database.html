@@ -16,7 +16,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
 
-            <div class="container-fluid mx-5">
+            <div class="container-fluid">
 
                 <a class="navbar-brand" href="/">e-KTP</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,12 +49,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
         </nav>
 
-        <div class="container">
+        <div class="container-fluid">
             <h3 class="text-center pb-5">Database KTP Indonesia</h3>
 
 
             <a  href ="/create" class="btn btn-primary mb-2">Create Data</a>
-            <table id="tabelKTP" class="table table-dark table-striped">
+            <table id="tabelKTP" class="table table table-striped">
                 <thead>
                     <tr>
                         <th scope="col">NIK</th>
@@ -72,7 +72,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <td th:text="${data.alamat}"></td>
                         <td>
                             <a href="/detail" class="btn btn-success">Detail</a>
-                            <a href="/edit" class="btn btn-warning">Edit</a>
+                            <a href="/edit" class="btn btn-warning text-light">Edit</a>
                             <a href="/delete" class="btn btn-danger">Delete</a>
                         </td>
                     </tr>
