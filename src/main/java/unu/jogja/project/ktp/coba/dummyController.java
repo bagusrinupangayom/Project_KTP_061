@@ -10,36 +10,47 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author ASUS
  */
-
 @Controller
 public class dummyController {
+    
     DummyJpaController dummyController = new DummyJpaController();
     List<Dummy> data = new ArrayList<>();
     
     @RequestMapping("/read")
-    @ResponseBody
-    public List<Dummy> getDummy( ){
+//    @ResponseBody
+    public String getDummy(Model model ){
+        int record = dummyController.getDummyCount();
+        String result ="";
         try{
-            data =  dummyController.findDummyEntities();
+            data =  dummyController.findDummyEntities().subList(0, record);
         }catch(Exception e){
-            e.getMessage();
+            result=e.getMessage();
         }
-        return data;
+         model.addAttribute("goDummy", data);
+         model.addAttribute("record", record);
+
+         
+        return "dummy";
     } 
     
     @RequestMapping("/create")
@@ -48,26 +59,66 @@ public class dummyController {
     }
     
     @PostMapping(value="/newData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseBody
     public String newDummy(@RequestParam("gambar") MultipartFile file, HttpServletRequest data) throws ParseException, Exception{
         
         Dummy dumData = new Dummy();
         
-        String id = data.getParameter("id");
-        int iid = Integer.parseInt(id);
+        int id = Integer.parseInt(data.getParameter("id"));
         
-        String tanggal = data.getParameter("tanggal");
-        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(tanggal);
-        
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(data.getParameter("tanggal"));
         byte[] image = file.getBytes();
+
         
-        dumData.setId(iid);
+        dumData.setId(id);
         dumData.setTanggal(date);
         dumData.setGambar(image);
         
         dummyController.create(dumData);
-
+        
         return "dummy/create";
     }
     
+    @RequestMapping(value = "/image", method = RequestMethod.GET, produces = {
+      MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE
+    })
+    
+    public ResponseEntity<byte[]> getImg(@RequestParam("id") int id) throws Exception {
+    Dummy dumData = dummyController.findDummy(id);
+    byte[] img = dumData.getGambar();
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(img);
+  }
+    
+  @GetMapping("/delete/{id}")
+  @ResponseBody
+  public String deleteDummy(@PathVariable("id") int id, HttpServletResponse res) throws Exception {
+    dummyController.destroy(id);
+    res.sendRedirect("/read");
+    return "deleted";
+  }
+  
+  @RequestMapping("/edit/{id}")
+  public String updateDummy(@PathVariable("id") int id, Model m) throws Exception {
+    Dummy d = dummyController.findDummy(id);
+    m.addAttribute("data", d);
+    return "dummy/update";
+  }
+  
+  @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @ResponseBody
+  public String updateDummyData(@RequestParam("gambar") MultipartFile f, HttpServletRequest r, HttpServletResponse res)
+      throws ParseException, Exception {
+    Dummy d = new Dummy();
+
+    int id = Integer.parseInt(r.getParameter("id"));
+    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(r.getParameter("tanggal"));
+    byte[] img = f.getBytes();
+    d.setId(id);
+    d.setTanggal(date);
+    d.setGambar(img);
+
+    dummyController.edit(d);
+    res.sendRedirect("/read");
+    return "updated";
+  }
 }
