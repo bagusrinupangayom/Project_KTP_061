@@ -36,8 +36,9 @@ public class dummyController {
     DummyJpaController dummyController = new DummyJpaController();
     List<Dummy> data = new ArrayList<>();
     
+    //qwdqwdqwdqwd
+    
     @RequestMapping("/read")
-//    @ResponseBody
     public String getDummy(Model model ){
         int record = dummyController.getDummyCount();
         String result ="";
@@ -59,7 +60,6 @@ public class dummyController {
     }
     
     @PostMapping(value="/newData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
     public String newDummy(@RequestParam("gambar") MultipartFile file, HttpServletRequest data) throws ParseException, Exception{
         
         Dummy dumData = new Dummy();
@@ -76,49 +76,42 @@ public class dummyController {
         
         dummyController.create(dumData);
         
-        return "dummy/create";
+        return "redirect:/read";
     }
     
-    @RequestMapping(value = "/image", method = RequestMethod.GET, produces = {
-      MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE
-    })
-    
+    @RequestMapping(value = "/image", method = RequestMethod.GET, produces = {MediaType.IMAGE_PNG_VALUE})  
     public ResponseEntity<byte[]> getImg(@RequestParam("id") int id) throws Exception {
-    Dummy dumData = dummyController.findDummy(id);
-    byte[] img = dumData.getGambar();
-    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(img);
+        Dummy dumData = dummyController.findDummy(id);
+        byte[] img = dumData.getGambar();
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(img);
   }
     
   @GetMapping("/delete/{id}")
-  @ResponseBody
-  public String deleteDummy(@PathVariable("id") int id, HttpServletResponse res) throws Exception {
+  public String deleteDummy(@PathVariable("id") int id) throws Exception {
     dummyController.destroy(id);
-    res.sendRedirect("/read");
-    return "deleted";
+    return "redirect:/read";
   }
   
   @RequestMapping("/edit/{id}")
-  public String updateDummy(@PathVariable("id") int id, Model m) throws Exception {
-    Dummy d = dummyController.findDummy(id);
-    m.addAttribute("data", d);
+  public String updateDummy(@PathVariable("id") int id, Model model) throws Exception {
+    Dummy dumData = dummyController.findDummy(id);
+    model.addAttribute("data", dumData);
     return "dummy/update";
   }
   
   @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @ResponseBody
-  public String updateDummyData(@RequestParam("gambar") MultipartFile f, HttpServletRequest r, HttpServletResponse res)
-      throws ParseException, Exception {
-    Dummy d = new Dummy();
+  public String updateDummyData(HttpServletRequest data, @RequestParam("gambar") MultipartFile f, HttpServletRequest r) throws ParseException, Exception {
+    Dummy dumData = new Dummy();
 
     int id = Integer.parseInt(r.getParameter("id"));
     Date date = new SimpleDateFormat("yyyy-MM-dd").parse(r.getParameter("tanggal"));
-    byte[] img = f.getBytes();
-    d.setId(id);
-    d.setTanggal(date);
-    d.setGambar(img);
-
-    dummyController.edit(d);
-    res.sendRedirect("/read");
-    return "updated";
+    byte[] image = f.getBytes();
+    dumData.setId(id);
+    dumData.setTanggal(date);
+    dumData.setGambar(image);
+    
+    dummyController.edit(dumData);
+    return "redirect:/read";
   }
 }
